@@ -1,0 +1,1 @@
+plan : session, flash 사용해서 signup에 적용
