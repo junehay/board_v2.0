@@ -5,24 +5,25 @@
     <script src="../public/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
-      function logincheck(){
+      function signupcheck(){
          const ckid = document.forms[0].elements[0].value
          const ckpwd = document.forms[0].elements[1].value
          const ckname = document.forms[0].elements[2].value
-         if(ckid == ""){
-            alert("Please enter your Id");
+         if(ckid.length <= 3){
+            alert("Id length is 4 to 12 characters");
             return false;
          };
-         if(ckpwd == ""){
-            alert("Please enter your Password"); 
+         if(ckpwd.length <= 3){
+            alert("Password length is 4 to 12 characters");
             return false;
-         };
+         }
          if(ckname == ""){
             alert("Please enter your Name");
             return false;
          };
       };      
     </script>
+    <title>Sign up</title>
 </head>
 <body>
  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -37,7 +38,7 @@
       <div class="row">
          <div class="col-md-4 mx-auto">
             <div class="myform form">
-               <form name="signup" action="/" onsubmit="return logincheck()" method="POST">
+               <form name="signup" action="/signup" onsubmit="return signupcheck()" method="POST">
                   <div class="form-group">   
                      <input type="text" class="form-control" id="userid" name="userid" placeholder="Id" maxlength="20">
                   </div>

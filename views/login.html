@@ -4,6 +4,22 @@
   <link href="login.css" rel="stylesheet">
   <script src="public/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <title>Login</title>
+  <script>
+      function logincheck(){
+         const ckid = document.forms[0].elements[0].value
+         const ckpwd = document.forms[0].elements[1].value
+         const ckname = document.forms[0].elements[2].value
+         if(ckid == ""){
+            alert("Please enter your Id");
+            return false;
+         };
+         if(ckpwd == ""){
+            alert("Please enter your Password"); 
+            return false;
+         };
+      };      
+    </script>
 </head>
 <body>
   <div class="wrapper fadeInDown">
@@ -14,10 +30,10 @@
       <div class="fadeIn first">
         <h5>Welcome</h3>
       </div>
-  
+      
       <!-- Login Form -->
-      <form>
-        <input type="text" id="id" class="fadeIn second" name="id" placeholder="id">
+      <form name="login" onsubmit="return logincheck()" action="/" method="POST">
+        <input type="text" id="userid" class="fadeIn second" name="userid" placeholder="id">
         <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
         <input type="submit" class="fadeIn fourth" value="Log In">
       </form>
