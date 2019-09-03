@@ -19,8 +19,8 @@ router.get('/fail', function(req, res){
 });
 
 router.get('/board', function(req, res){
-    res.render('board/board.html')
-})
+    res.render('board/board');
+});
 
 // logout
 router.get('/logout', function(req, res){
