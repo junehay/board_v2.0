@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
-const flash = require('connect-flash');
 
 // DB
 mongoose.set('useNewUrlParser', true);   
@@ -27,19 +26,19 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
 app.use(session({
-    secret : 'asdk345j345j5bjksf',
+    secret : 'asdk345@j345j!$@5bjksf',
     resave : false,
     saveUninitialized : true,
     cookie : {
         maxAge : 1000 * 60 * 60
     }
 }));
-app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
 // routes
 app.use('/', require('./routes/login'));
+app.use('/board', require('./routes/post'));
 
 // server
 app.listen(3000, function(){

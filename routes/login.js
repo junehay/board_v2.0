@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
 const passport = require('./login_passport');
 const mariadb = require('mariadb');
 
@@ -25,15 +24,6 @@ router.post('/', passport.authenticate('local',{
 );
 router.get('/fail', function(req, res){
     res.send('<script>alert("Incorrect Id or Password ");location.href="/";</script>');
-});
-
-router.get('/board', function(req, res){
-    if(req.user){
-        console.log(req.user);
-        res.render('board/board');
-    }else{
-        res.send('<script>alert("잘못된 접근");location.href="/";</script>');
-    }
 });
 
 // logout
