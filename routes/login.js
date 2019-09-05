@@ -16,7 +16,7 @@ const pool = mariadb.createPool({
 router.get('/', function(req, res){
     res.render('login.html');
 });
-router.post('/', passport.authenticate('login',{
+router.post('/', passport.authenticate('local',{
     failureRedirect : '/fail'
     }),
     function(req, res){
@@ -28,12 +28,17 @@ router.get('/fail', function(req, res){
 });
 
 router.get('/board', function(req, res){
-    res.render('board/board');
+    if(req.user){
+        console.log(req.user);
+        res.render('board/board');
+    }else{
+        res.send('<script>alert("잘못된 접근");location.href="/";</script>');
+    }
 });
 
 // logout
 router.get('/logout', function(req, res){
-    res.logout();
+    req.logout();
     res.redirect('/');
 });
 
@@ -42,35 +47,22 @@ router.get('/signup', function(req, res){
     res.render('signup/signup.html');
 });
 
-/*router.post('/signup', function(req, res){
-    const userid = req.body.userid;
-    sequelize.findOne({userid:userid}, function(err, user){
-        if(!user){
-            return sequelize.create(req.body, function(err, user){
-            if(err) return res.json(err);
-            res.send('<script>alert("Sign up is complete");location.href="/";</script>')});}
-            else{return res.send('<script>alert("아이디 중복");location.href="/signup";</script>');}
-    });
-});*/
-
-router.post('/signup', function(req, res){
-    try{
+router.post('/signup', async function(req, res){
         const id = req.body.userid;
         const password = req.body.password;
         const name = req.body.name;
 
-        pool.query('SELECT * FROM user WHERE userid= OR name=?', [id, name], function(err, data){
-            if(data.length == 0){
-                pool.query('INSERT INTO user VALUES(?,?,?)', [id, password, name], function(){
-                    console.log(id, password, name);
-                    res.redirect('/signup');
-                });
-            }
-        });
-            
-    }catch(err){
-        console.log(err);
-        }   
-});
+        const namecheck = await pool.query('SELECT name FROM user WHERE name=?', [name]);
+        const idcheck = await pool.query('SELECT userid FROM user WHERE userid=?', [id]);
+            if(idcheck.length != 0){
+                return res.send('<script>alert("아이디 중복");location.href="/signup";</script>');
+            };
+            if(namecheck.length != 0){
+                return res.send('<script>alert("이름 중복");location.href="/signup";</script>');
+            };
+            await pool.query('INSERT INTO user VALUES (?,?,?)', [id, password, name]);
+                console.log(id, password, name);
+                res.send('<script>alert("성공");location.href="/";</script>');
+    });
 
 module.exports = router;

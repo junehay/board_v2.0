@@ -17,3 +17,10 @@ salt는 랜덤 값으로써, salt 값을 추가하여 해시를 수 만번 반�
 
 async await promise
 
+
+
+2019.09.05
+
+id pwd name 길이체크 앞단에서 완료 / id, name db중복체크 완료;
+
+crypto, salt 나중에 // 일단 로그인 세션 쿠키 로그아웃;
