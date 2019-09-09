@@ -74,30 +74,41 @@
                         <div class="panel body">
                             <table width="100%" class="table table-striped table-bordered table-hover">
                                 <thead>
+                                    <colgroup>
+                                        <col width="5%">
+                                        <col width="68%">
+                                        <col width="9%">
+                                        <col width="9%">
+                                        <col width="9%">
+                                    </colgroup>
                                     <tr>
-                                        <col width="50%"><th>제목</th>
-                                        <th>작성자</th>
-                                        <th>작성일</th>
-                                        <th>조회수</th>
+                                        <th class="text-center">Num</th>
+                                        <th>Title</th>
+                                        <th class="text-center">Author</th>
+                                        <th class="text-center">Date</th>
+                                        <th class="text-center">Views</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <% posts.forEach(function (post) { %>
-                                    <tr>
+                                    <tr onclick="window.location = '/board/?page=<%= page %>'">
+                                        <td class="number" align="center">
+                                            <%=post.number%>
+                                        </td>
                                         <td class="title">
                                             <a href="/board/<%=post._id %>"><div><%= post.title %></div></a>
                                         </td>
-                                        <td class="author">
+                                        <td class="author" align="center">
                                             <%= post.author %>    
                                         </td>
-                                        <td class="date">
+                                        <td class="date" align="center">
                                             <% if(moment(post.createdAt).format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')){ %>
                                               <%= moment(post.createdAt).format('HH:MM') %>
                                             <% }else{ %>
                                             <%= moment(post.createdAt).format('YYYY-MM-DD') %>
                                             <% } %>
                                         </td>
-                                        <td>
+                                        <td class="views" align="center">
                                             <%= post.views %>    
                                         </td>
                                     </tr>
@@ -106,11 +117,26 @@
                             </table>
                         </div>
                     </div>
+                    <a class="btn btn-primary" href="/board/new">New</a>
+                    <div align="center">
+                        <ul class="pagination">
+                            <% var offset = 3; %>
+                            <% for(i=1;i<=maxPage;i++){ %>
+                            <% if(i<=offset || i>maxPage-offset || (i>=page-(offset-1) && i<=page+(offset-1))){ %>
+                                <% if(i != page){ %>
+                                <li><a href="/board?page=<%= i %>"> <%= i %> </a></li>
+                                <% } else { %>
+                                <li><a><b><%= i %></b></a></li>
+                                <% } %>
+                            <% } else if(i == offset+1 || i == maxPage-offset){ %>
+                                <li><a>...</a></li>
+                            <% } %>
+                            <%}%>
+                        </ul>  
+                    </div>
                 </div>
-                <a class="btn btn-primary" href="/board/new">New</a>
             </div>
         </div>
-
     </div>
     <!-- /#wrapper -->
 
