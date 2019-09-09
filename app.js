@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
+const passport = require('passport');
 const session = require('express-session');
 
 // DB
@@ -21,7 +21,7 @@ db.on("error", function(err){
 // express
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
-app.use(express.static('views'));
+app.use(express.static(__dirname + '/views'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
@@ -39,6 +39,7 @@ app.use(passport.session());
 // routes
 app.use('/', require('./routes/login'));
 app.use('/board', require('./routes/post'));
+app.use('/board/:id', require('./routes/post'));
 
 // server
 app.listen(3000, function(){
