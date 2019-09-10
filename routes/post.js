@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
+const PostNum = require('../models/PostNum');
 const moment = require('moment');
 
 // index
 router.get('/', async function(req, res){
     if(req.user){
         const paginate = await Post.paginate();
+        const totalDocs = paginate.totalDocs;
         const maxPage = paginate.totalPages;
         const page = req.query.page;
         const limit = 10;
@@ -14,7 +16,7 @@ router.get('/', async function(req, res){
         Post.find().sort({createdAt:-1}).skip(skip).limit(limit).exec(function (err,posts) {
             if(err) return res.json(err);
             res.render("board/board",{
-                posts:posts, user:req.user, page:page, maxPage:maxPage, moment
+                posts:posts, totalDocs:totalDocs, user:req.user, page:page, maxPage:maxPage, moment
             });
         });
     }else{
@@ -25,8 +27,8 @@ router.get('/', async function(req, res){
 // new
 router.get('/new', function(req, res){
     if(req.user){
-        Post.countDocuments({}, function(err, count){
-        res.render('board/new', {user:req.user, count});
+        PostNum.findOne({title:"postNum"}, function(err, postnum){
+        res.render('board/new', {user:req.user, postnum:postnum});
         });
     }else{
         res.send('<script>alert("잘못된 접근");location.href="/";</script>');
@@ -35,9 +37,14 @@ router.get('/new', function(req, res){
 
 // create
 router.post('/', function(req, res){
-    Post.create(req.body, function(err, post){
+    PostNum.findOne({title:"postNum"}, function(err, postnum){
         if(err) return res.json(err);
-        res.redirect('/board');
+        postnum.number++;
+        postnum.save();
+            Post.create(req.body, function(err, post){
+                if(err) return res.json(err);
+                res.redirect('/board');
+            });
     });
 });
 
