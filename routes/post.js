@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
 const PostNum = require('../models/PostNum');
+const PostBackup = require('../models/PostBackup');
 const moment = require('moment');
 
 // index
@@ -13,16 +14,25 @@ router.get('/', async function(req, res){
         const page = req.query.page;
         const limit = 10;
         const skip = (page-1)*limit;
+
+        const search = searchDB(req.query);
+
         Post.find().sort({createdAt:-1}).skip(skip).limit(limit).exec(function (err,posts) {
             if(err) return res.json(err);
             res.render("board/board",{
-                posts:posts, totalDocs:totalDocs, user:req.user, page:page, maxPage:maxPage, moment
+                posts:posts, totalDocs:totalDocs, user:req.user, page:page, maxPage:maxPage, moment, search:search
             });
         });
     }else{
         res.send('<script>alert("잘못된 접근");location.href="/";</script>');
     };
 });
+
+function searchDB(query){
+    if(query.searchType == "author"){
+        console.log("sdfafd");
+    }   
+};
 
 // new
 router.get('/new', function(req, res){
@@ -37,14 +47,17 @@ router.get('/new', function(req, res){
 
 // create
 router.post('/', function(req, res){
-    PostNum.findOne({title:"postNum"}, function(err, postnum){
+    PostNum.findOne({title:"postNum"}, async function(err, postnum){
         if(err) return res.json(err);
-        postnum.number++;
+        await postnum.number++;
         postnum.save();
-            Post.create(req.body, function(err, post){
-                if(err) return res.json(err);
-                res.redirect('/board');
-            });
+    });
+    Post.create(req.body, async function(err, post){
+        if(err) return res.json(err);
+        await res.redirect('/board');
+    });
+    PostBackup.create(req.body, function(err){
+        if(err) return res.json(err);
     });
 });
 

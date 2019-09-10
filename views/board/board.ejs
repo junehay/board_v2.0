@@ -23,6 +23,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
 </head>
 
 <body>
@@ -92,7 +93,7 @@
                                 </thead>
                                 <tbody>
                                     <% posts.forEach(function (post) { %>
-                                    <tr onclick="window.location = '/board/?page=<%= page %>'">
+                                    <tr>
                                         <td class="number" align="center">
                                             <%=post.number%>
                                         </td>
@@ -118,7 +119,20 @@
                             </table>
                         </div>
                     </div>
-                    <a class="btn btn-primary" href="/board/new">New</a>
+                    
+                    <div style="float:left"><a class="btn btn-primary" href="/board/new">New</a></div>
+                        <div style="float:right">
+                            <form action="/board" method="GET">
+                            <select name="searchType">
+                                <option value="title">title</option>    
+                                <option value="body">body</option>
+                                <option value="author">author</option>
+                            </select>
+                            <input type="text" name="searchText" placeholder="구현중" readonly="readonly">
+                            <button type="submit">search</button>
+                            </form>
+                        </div>
+                   
                     <div align="center">
                         <ul class="pagination">
                             <% var offset = 3; %>
@@ -133,7 +147,7 @@
                                 <li><a>...</a></li>
                             <% } %>
                             <%}%>
-                        </ul>  
+                        </ul>
                     </div>
                 </div>
             </div>
