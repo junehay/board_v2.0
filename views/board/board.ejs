@@ -105,7 +105,7 @@
                                         </td>
                                         <td class="date" align="center">
                                             <% if(moment(post.createdAt).format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')){ %>
-                                              <%= moment(post.createdAt).format('HH:MM') %>
+                                              <%= moment(post.createdAt).format('HH:mm') %>
                                             <% }else{ %>
                                             <%= moment(post.createdAt).format('YYYY-MM-DD') %>
                                             <% } %>
