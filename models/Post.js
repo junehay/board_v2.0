@@ -7,7 +7,12 @@ const postSchema = mongoose.Schema({
         body : {type:String, required:true},
         author : {type:String, required:true},
         createdAt : {type:Date, required:true, default:Date.now },
-        views : {type:Number, required:true, default:0}
+        views : {type:Number, required:true, default:0},
+        comments : [{
+                body : {type:String},
+                author : {type:String, required:true},
+                createdAt : {type:Date, default:Date.now}
+        }]
 });
 
 postSchema.plugin(mongoosePaginate);

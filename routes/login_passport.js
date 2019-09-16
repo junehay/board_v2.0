@@ -20,15 +20,14 @@ passport.deserializeUser(function(user, done){
     done(null, user);
 });
 
-
 passport.use('local', new LocalStrategy({
     usernameField: 'userid',
-    passwordField : 'password',
-    passReqToCallback : false
+    passwordField : 'password'
 }, 
     async function (userid, password, done) {
         const dbid = await pool.query('SELECT userid FROM user WHERE userid=?', [userid]);
         const dbpwd = await pool.query('SELECT password FROM user WHERE password=?', [password]);
+        const user = await pool.query('SELECT * FROM user WHERE userid=? AND password=?', [userid, password]);
         if(dbid.length != 0){
             if(dbpwd.length != 0){
                 return done(null, userid);

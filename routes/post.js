@@ -16,11 +16,11 @@ router.get('/', async function(req, res){
         const skip = (page-1)*limit;
 
         const search = searchDB(req.query);
-
-        Post.find().sort({createdAt:-1}).skip(skip).limit(limit).exec(function (err,posts) {
+        
+        Post.find(search).sort({createdAt:-1}).skip(skip).limit(limit).exec(function (err,posts) {
             if(err) return res.json(err);
             res.render("board/board",{
-                posts:posts, totalDocs:totalDocs, user:req.user, page:page, maxPage:maxPage, moment, search:search
+                posts:posts, totalDocs:totalDocs, user:req.user, page:page, maxPage:maxPage, moment
             });
         });
     }else{
@@ -29,9 +29,16 @@ router.get('/', async function(req, res){
 });
 
 function searchDB(query){
+    const searchText = query.searchText;
+    if(query.searchType == "title"){
+        return {title:{$regex:searchText}};
+    };
+    if(query.searchType == "body"){
+        return {body:{$regex:searchText}};
+    };
     if(query.searchType == "author"){
-        console.log("sdfafd");
-    }   
+        return {author:{$regex:searchText}};
+    };
 };
 
 // new
@@ -46,8 +53,8 @@ router.get('/new', function(req, res){
 });
 
 // create
-router.post('/', function(req, res){
-    PostNum.findOne({title:"postNum"}, async function(err, postnum){
+router.post('/', async function(req, res){
+    await PostNum.findOne({title:"postNum"}, async function(err, postnum){
         if(err) return res.json(err);
         await postnum.number++;
         postnum.save();
@@ -62,18 +69,42 @@ router.post('/', function(req, res){
 });
 
 // show
-router.get("/:id", function(req, res){
+router.get('/:id', function(req, res){
     if(req.user){
-        Post.findOne({_id:req.params.id}, function(err, post){
+        Post.findOne({_id:req.params.id}, async function(err, post){
             if(err) return res.json(err);
-            post.views++;
-            post.save();
-            res.render('board/show', {post:post, user:req.user, page:req.query.page});
+            await post.views++;
+            await post.save();
+            res.render('board/show', {post:post, user:req.user, page:req.query.page, moment});
         });
     }else{
         res.send('<script>alert("잘못된 접근");location.href="/";</script>');
     };
 });
+
+// create comment
+router.post('/:id/comments', function(req, res){
+    if(req.user){
+        Post.update({_id:req.params.id}, {$push:{comments:req.body}}, function(err, post){
+            if(err) return res.json(err);
+            res.redirect('/board/'+req.params.id);
+        })
+    }else{
+        res.send('<script>alert("잘못된 접근");location.href="/";</script>');
+    };
+})
+
+// delete comment
+router.delete('/:id/comments/:commentsId', function(req, res){
+    if(req.user){
+        Post.update({_id:req.params.id}, {$pull:{comments:{_id:req.params.commentsId}}}, function(err, post){
+            if(err) return res.json(err);
+            res.redirect('/board/'+req.params.id);
+        })
+    }else{
+        res.send('<script>alert("잘못된 접근");location.href="/";</script>');
+    };
+})
 
 // edit
 router.get('/:id/edit', function(req, res){

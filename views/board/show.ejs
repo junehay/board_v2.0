@@ -27,7 +27,7 @@
         function check(){
             if(confirm("Are you sure to delete?") == false){
                 return false;
-            }
+            };
         };
     </script>
 </head>
@@ -95,11 +95,44 @@
                             </div>
                             <% if(user == post.author){ %>
                             <a class="btn btn-success" href="/board/<%=post._id%>/edit">Edit</a>
-                            <form action="/board/<%=post._id%>?_method=Delete" method="post" onsubmit="return check()">
+                            <form action="/board/<%=post._id%>?_method=Delete" method="POST" onsubmit="return check()">
                                 <button class="btn btn-warning">Delete</button>
                             </form>
                             <% } %>
                             <hr/><a class="btn btn-info" href="/board">Back</a>
+                            
+                            <!--comment-->
+                            <div>
+                                <hr/>
+                                <h4>Coments</h4><hr/>
+                                <% post.comments.forEach(function(comment){ %>
+                                    <div>
+                                        <h5><b><%=comment.author%></b> (<%=moment(comment.createdAt).format("YYYY-MM-DD, HH:mm:ss")%>)</h5>
+                                        <% if(user == comment.author){ %>
+                                            <form action="/board/<%=post._id%>/comments/<%=comment._id%>?_method=Delete" method="POST">
+                                                <div style="float:right"><h6><button>Delete</button></h6></div>
+                                            </form>
+                                        <% } %>
+                                    </div>
+                                    <div>
+                                        &nbsp;<%=comment.body%><hr/>
+                                    </div>
+                                <% }); %>
+                            </div>
+
+                            <div>
+                                <form action="/board/<%=post._id%>/comments" method="POST">
+                                <hr/>
+                                    <div class="form-group">
+                                        <label>Comment</label>
+                                        <textarea class="form-control" name="body" rows="3"></textarea>
+                                    </div>
+                                    <button class="submit">Submit</button>
+                                    <div class="form-group">
+                                        <input class="hidden" name="author" value="<%=user%>" readonly="readonly">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

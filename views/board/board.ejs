@@ -98,7 +98,10 @@
                                             <%=post.number%>
                                         </td>
                                         <td class="title">
-                                            <a href="/board/<%=post._id %>"><div><%= post.title %></div></a>
+                                            <a href="/board/<%=post._id %>"><%= post.title %></a> 
+                                            <% if(post.comments.length >= 1){ %>
+                                            <span style="color:#4d4949">(<%=post.comments.length%>)</span>
+                                            <% } %>
                                         </td>
                                         <td class="author" align="center">
                                             <%= post.author %>    
@@ -128,7 +131,7 @@
                                 <option value="body">body</option>
                                 <option value="author">author</option>
                             </select>
-                            <input type="text" name="searchText" placeholder="구현중" readonly="readonly">
+                            <input type="text" name="searchText">
                             <button type="submit">search</button>
                             </form>
                         </div>
