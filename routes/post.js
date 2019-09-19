@@ -45,7 +45,7 @@ function searchDB(query){
 router.get('/new', function(req, res){
     if(req.user){
         PostNum.findOne({title:"postNum"}, function(err, postnum){
-        res.render('board/new', {user:req.user, postnum:postnum});
+            res.render('board/new', {user:req.user, postnum:postnum});
         });
     }else{
         res.send('<script>alert("잘못된 접근");location.href="/";</script>');
@@ -53,18 +53,28 @@ router.get('/new', function(req, res){
 });
 
 // create
-router.post('/', async function(req, res){
-    await PostNum.findOne({title:"postNum"}, async function(err, postnum){
-        if(err) return res.json(err);
-        await postnum.number++;
-        postnum.save();
-    });
-    Post.create(req.body, async function(err, post){
-        if(err) return res.json(err);
-        await res.redirect('/board');
-    });
-    PostBackup.create(req.body, function(err){
-        if(err) return res.json(err);
+router.post('/', function(req, res){
+    Post.findOne({author:req.user}).sort({createdAt:-1}).exec(async function (err, ratestPost){
+        const t2 = await moment(ratestPost.createdAt);
+        const now = await Date.now();
+        const t1 = await moment(now);
+        const diff = moment.duration(t2.diff(t1)).asMinutes();
+        if(diff > -1){
+            res.send('<script>alert("글 작성은 1분에 1개만 가능합니다.");location.href="/board";</script>');
+        }else{
+        PostNum.findOne({title:"postNum"}, async function(err, postnum){
+            if(err) return res.json(err);
+            await postnum.number++;
+            postnum.save();
+        });
+        Post.create(req.body, function(err){
+            if(err) return res.json(err);
+            res.redirect('/board');
+        });
+        PostBackup.create(req.body, function(err){
+            if(err) return res.json(err);
+        });
+        };
     });
 });
 

@@ -42,6 +42,6 @@ app.use('/board', require('./routes/post'));
 app.use('/board/:id', require('./routes/post'));
 
 // server
-app.listen(3000, function(){
-    console.log('server on, port : 3000');
+app.listen(port='80', function(){
+    console.log('server on, port : ' + port);
 });
